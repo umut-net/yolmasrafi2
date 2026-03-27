@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yozgat - Kayseri Yol Masrafı ve Yakıt Hesaplama (2026 KGM Otoyol Ücreti)</title>
+<title>Samsun - Sinop Yol Masrafı ve Yakıt Hesaplama (2026 KGM Otoyol Ücreti)</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0d0f14;--surface:#161920;--surface2:#1e2230;--border:#2a2f42;--accent:#f5a623;--accent2:#e8522a;--text:#eef0f6;--muted:#7a7f96;--green:#2ecc71;--blue:#3b82f6;--purple:#a855f7;}
@@ -167,12 +167,12 @@ select option{background:#1e2230;}
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <meta name="description" content="Yozgat ile Kayseri arası arabanız ne kadar yakar? 2026 güncel benzin, dizel, LPG fiyatları ve KGM otoban ücretleriyle net yol masrafınızı hesaplayın.">
-  <meta name="keywords" content="Yozgat Kayseri arası kaç km, Yozgat Kayseri yol masrafı, Yozgat Kayseri araçla ne kadar yakar, Yozgat Kayseri otoban ücreti 2026, yozgat kayseri hgs ücreti">
-  <meta property="og:title" content="Yozgat - Kayseri Yol Masrafı ve Yakıt Hesaplama (2026 KGM Otoyol Ücreti)">
-  <meta property="og:description" content="Yozgat ile Kayseri arası arabanız ne kadar yakar? 2026 güncel benzin, dizel, LPG fiyatları ve KGM otoban ücretleriyle net yol masrafınızı hesaplayın.">
+  <meta name="description" content="Samsun ile Sinop arası arabanız ne kadar yakar? 2026 güncel benzin, dizel, LPG fiyatları ve KGM otoban ücretleriyle net yol masrafınızı hesaplayın.">
+  <meta name="keywords" content="Samsun Sinop arası kaç km, Samsun Sinop yol masrafı, Samsun Sinop araçla ne kadar yakar, Samsun Sinop otoban ücreti 2026, samsun sinop hgs ücreti">
+  <meta property="og:title" content="Samsun - Sinop Yol Masrafı ve Yakıt Hesaplama (2026 KGM Otoyol Ücreti)">
+  <meta property="og:description" content="Samsun ile Sinop arası arabanız ne kadar yakar? 2026 güncel benzin, dizel, LPG fiyatları ve KGM otoban ücretleriyle net yol masrafınızı hesaplayın.">
   <meta property="og:type" content="website">
-  <link rel="canonical" href="https://umut-net.github.io/yolmasrafi/yozgat-kayseri/">
+  <link rel="canonical" href="https://umut-net.github.io/yolmasrafi/samsun-sinop/">
   
   <script type="application/ld+json">
   {
@@ -181,15 +181,15 @@ select option{background:#1e2230;}
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "Yozgat - Kayseri otoyol (otoban) ücreti ne kadar?",
+        "name": "Samsun - Sinop otoyol (otoban) ücreti ne kadar?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "2026 yılı güncel KGM tarifesine göre Yozgat ile Kayseri arası otoyol (HGS) ücreti ortalama Bulunmuyor (Sadece yakıt masrafı) civarındadır."
+          "text": "2026 yılı güncel KGM tarifesine göre Samsun ile Sinop arası otoyol (HGS) ücreti ortalama Bulunmuyor (Sadece yakıt masrafı) civarındadır."
         }
       },
       {
         "@type": "Question",
-        "name": "Yozgat - Kayseri arası araçla yol masrafı ne kadar tutar?",
+        "name": "Samsun - Sinop arası araçla yol masrafı ne kadar tutar?",
         "acceptedAnswer": {
           "@type": "Answer",
           "text": "Yol masrafı aracınızın yakıt tipine (Benzin, Dizel, LPG) ve tüketimine göre değişmektedir. Sayfamızdaki hesaplama aracı ile güncel 2026 akaryakıt fiyatları üzerinden net maliyetinizi öğrenebilirsiniz."
@@ -217,7 +217,7 @@ select option{background:#1e2230;}
 
 <div class="container">
   <div class="hero">
-    <h1>Yozgat → Kayseri<span class="line2">Yol Masrafı Hesaplama</span></h1>
+    <h1>Samsun → Sinop<span class="line2">Yol Masrafı Hesaplama</span></h1>
     <p>Araç, otobüs ve uçak — gerçek rota mesafesi, canlı yakıt fiyatları ve KGM 2026 tarifeleriyle.</p>
     <div class="fuel-status fallback" id="fuelStatus">
       <span class="dot"></span>
@@ -229,9 +229,9 @@ select option{background:#1e2230;}
 
   
     <div style="margin-bottom: 20px; padding: 15px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border);">
-        <h1 style="font-size: 1.2rem; margin-bottom: 10px; color: var(--text);">🚙 Yozgat - Kayseri Yolculuk Masrafı ve Güzergah Bilgileri</h1>
+        <h1 style="font-size: 1.2rem; margin-bottom: 10px; color: var(--text);">🚙 Samsun - Sinop Yolculuk Masrafı ve Güzergah Bilgileri</h1>
         <p style="font-size: 0.9rem; color: var(--muted); line-height: 1.5;">
-            <strong>Yozgat</strong> şehrinden yola çıkıp <strong>Kayseri</strong> şehrine kendi aracınızla seyahat etmeyi planlıyorsanız, güncel yakıt fiyatları ve <strong>2026 KGM otoyol ücretleri</strong> ile net maliyetinizi bu sayfadan hesaplayabilirsiniz. Dilerseniz otobüs veya uçak biletleriyle araba masrafınızı karşılaştırabilirsiniz.
+            <strong>Samsun</strong> şehrinden yola çıkıp <strong>Sinop</strong> şehrine kendi aracınızla seyahat etmeyi planlıyorsanız, güncel yakıt fiyatları ve <strong>2026 KGM otoyol ücretleri</strong> ile net maliyetinizi bu sayfadan hesaplayabilirsiniz. Dilerseniz otobüs veya uçak biletleriyle araba masrafınızı karşılaştırabilirsiniz.
         </p>
     </div>
     
@@ -1033,8 +1033,8 @@ populateCities();
         var f = document.getElementById('from');
         var t = document.getElementById('to');
         if (f && t) {
-          f.value = 'Yozgat';
-          t.value = 'Kayseri';
+          f.value = 'Samsun';
+          t.value = 'Sinop';
           // Varsayılan aracı seç
           document.getElementById('carModel').value = '7.0';
           calculate();
