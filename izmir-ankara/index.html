@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İzmir Ankara Arası Yol Masrafı Hesaplama 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f14;--surface:#161920;--surface2:#1e2230;--border:#2a2f42;--accent:#f5a623;--accent2:#e8522a;--text:#eef0f6;--muted:#7a7f96;--green:#2ecc71;--blue:#3b82f6;--purple:#a855f7;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% 20%,rgba(245,166,35,.06) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(232,82,42,.05) 0%,transparent 60%);pointer-events:none;z-index:0;}
+.road-bg{position:fixed;bottom:0;left:0;width:100%;height:180px;background:linear-gradient(to top,rgba(245,166,35,.03),transparent);pointer-events:none;z-index:0;overflow:hidden;}
+.road-bg::before{content:'';position:absolute;bottom:40px;left:-100%;width:300%;height:2px;background:repeating-linear-gradient(90deg,transparent 0,transparent 40px,rgba(245,166,35,.15) 40px,rgba(245,166,35,.15) 80px);animation:roadMove 6s linear infinite;}
+@keyframes roadMove{to{transform:translateX(33.33%);}}
+header{position:relative;z-index:1;padding:36px 48px 0;display:flex;align-items:center;gap:16px;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:42px;height:42px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.5px;}
+.logo-text span{color:var(--accent);}
+.badge{margin-left:auto;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);color:var(--accent);font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+.container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:60px 24px 100px;}
+.hero{text-align:center;margin-bottom:56px;animation:fadeUp .7s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(32px,5vw,52px);line-height:1.1;letter-spacing:-1.5px;margin-bottom:14px;}
+.hero h1 .line2{color:var(--accent);display:block;}
+.hero p{color:var(--muted);font-size:16px;line-height:1.6;max-width:520px;margin:0 auto;}
+
+/* Fuel status pill */
+.fuel-status{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;margin-top:14px;transition:all .3s;}
+.fuel-status{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);color:var(--accent);}
+.fuel-status .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;margin-bottom:20px;animation:fadeUp .7s ease both;}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:24px;display:flex;align-items:center;gap:8px;}
+.card-title::before{content:'';width:20px;height:2px;background:var(--accent);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:8px;}
+label{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;}
+select,input[type="number"]{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;padding:12px 16px;width:100%;outline:none;transition:border-color .2s,box-shadow .2s;appearance:none;-webkit-appearance:none;cursor:pointer;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7f96' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+select:focus,input[type="number"]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,166,35,.12);}
+select option{background:#1e2230;}
+
+/* Fuel price card */
+.fuel-prices-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.fuel-price-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;position:relative;transition:border-color .3s;}
+
+.fuel-price-item label{font-size:11px;color:var(--muted);text-transform:none;letter-spacing:0;}
+.fuel-price-item input{background:transparent;border:none;color:var(--text);font-family:'Syne',sans-serif;font-weight:700;font-size:18px;padding:0;width:100%;outline:none;}
+.fuel-price-item input:focus{color:var(--accent);}
+.fuel-price-item .unit{font-size:11px;color:var(--muted);}
+
+
+.fuel-source-note{font-size:11px;color:var(--muted);margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+.toggle-group{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.toggle-btn{border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;padding:14px 16px;border-radius:10px;cursor:pointer;transition:all .2s;text-align:left;display:flex;align-items:center;gap:10px;}
+.toggle-btn .icon{font-size:18px;}
+.toggle-btn:hover{border-color:var(--accent);color:var(--text);}
+.toggle-btn.active{border-color:var(--accent);background:rgba(245,166,35,.1);color:var(--accent);}
+.fuel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.fuel-btn{border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:12px 8px;border-radius:10px;cursor:pointer;transition:all .2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.fuel-btn .ficon{font-size:22px;}
+.fuel-btn:hover{border-color:var(--accent);color:var(--text);}
+.fuel-btn.active{border-color:var(--accent);background:rgba(245,166,35,.1);color:var(--accent);}
+.calc-btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:16px;letter-spacing:.5px;border:none;border-radius:12px;padding:18px;cursor:pointer;transition:opacity .2s,transform .15s;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.calc-btn:hover{opacity:.92;transform:translateY(-1px);}
+.calc-btn:active{transform:translateY(0);}
+.calc-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(13,15,20,.85);z-index:100;align-items:center;justify-content:center;flex-direction:column;gap:20px;}
+.loading-overlay.active{display:flex;}
+.spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);font-size:15px;}
+
+/* Result */
+#result{display:none;animation:fadeUp .5s ease both;}
+.result-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.route-label{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.route-cities{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;letter-spacing:-.5px;display:flex;align-items:center;gap:10px;}
+.route-arrow{color:var(--accent);}
+.total-cost{text-align:right;}
+.total-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.total-amount{font-family:'Syne',sans-serif;font-weight:800;font-size:38px;letter-spacing:-1px;color:var(--accent);line-height:1;}
+.total-amount span{font-size:20px;}
+.breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.breakdown-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.b-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.b-value{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;letter-spacing:-.3px;}
+.b-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.info-strip{background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.15);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--muted);line-height:1.6;}
+.info-strip strong{color:var(--accent);}
+.divider{height:1px;background:var(--border);margin:24px 0;}
+.section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.section-title::before{content:'';width:20px;height:2px;background:var(--accent);display:inline-block;}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.comp-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.comp-card.highlight{border-color:rgba(46,204,113,.3);background:rgba(46,204,113,.04);}
+.comp-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.comp-title .dot{width:6px;height:6px;border-radius:50%;background:var(--muted);}
+.comp-card.highlight .dot{background:var(--green);}
+.comp-price{font-family:'Syne',sans-serif;font-weight:700;font-size:22px;letter-spacing:-.5px;margin-bottom:4px;}
+.comp-detail{font-size:12px;color:var(--muted);line-height:1.7;}
+.savings-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(46,204,113,.12);border:1px solid rgba(46,204,113,.25);color:var(--green);font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;margin-top:10px;}
+
+/* Obilet section */
+.obilet-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px;}
+.obilet-card{border:1px solid var(--border);border-radius:14px;padding:20px;background:var(--surface2);display:flex;flex-direction:column;gap:12px;}
+.obilet-card.bus-card{border-color:rgba(22,163,74,.25);}
+.obilet-card.flight-card{border-color:rgba(37,99,235,.25);}
+.obilet-header{display:flex;align-items:center;gap:10px;}
+.obilet-icon{font-size:26px;}
+.obilet-label{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;}
+.obilet-sublabel{font-size:12px;color:var(--muted);}
+.obilet-info{font-size:12px;color:var(--muted);line-height:1.6;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:8px;border:1px solid var(--border);}
+.obilet-link{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;text-decoration:none;transition:opacity .2s,transform .15s;border:none;cursor:pointer;}
+.obilet-link:hover{opacity:.88;transform:translateY(-1px);}
+.obilet-link.bus{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;}
+.obilet-link.flight{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;}
+.obilet-link.disabled{opacity:.4;pointer-events:none;}
+.no-airport-note{font-size:11px;color:#e74c3c;display:flex;align-items:center;gap:4px;}
+
+.price-note{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);line-height:1.7;}
+.error-msg{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);color:#e74c3c;border-radius:10px;padding:14px 18px;font-size:14px;text-align:center;display:none;margin-top:12px;}
+
+@media(max-width:700px){
+  header{padding:20px 20px 0;}
+  .container{padding:40px 16px 80px;}
+  .form-grid{grid-template-columns:1fr;}
+  .fuel-grid{grid-template-columns:repeat(2,1fr);}
+  .breakdown{grid-template-columns:1fr 1fr;}
+  .comparison{grid-template-columns:1fr;}
+  .fuel-prices-grid{grid-template-columns:1fr 1fr;}
+  .obilet-grid{grid-template-columns:1fr;}
+  .card{padding:24px 20px;}
+}
+
+/* Map */
+#mapSection{display:none;animation:fadeUp .5s ease both;}
+#map{height:340px;border-radius:14px;border:1px solid var(--border);overflow:hidden;z-index:1;}
+.leaflet-container{background:#1a1d2e;}
+.leaflet-tile{filter:brightness(.85) saturate(.9);}
+
+/* Affiliate */
+#affiliateSection{display:none;animation:fadeUp .5s ease both;}
+.affiliate-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.aff-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px 16px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,transform .2s;}
+.aff-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.aff-icon{font-size:26px;}
+.aff-label{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;}
+.aff-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+.aff-link{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:9px;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;text-decoration:none;transition:opacity .2s;margin-top:auto;}
+.aff-link:hover{opacity:.85;}
+.aff-link.car{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;}
+.aff-link.hotel{background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;}
+.aff-link.insurance{background:linear-gradient(135deg,#10b981,#059669);color:#fff;}
+.aff-note{font-size:11px;color:var(--muted);text-align:center;margin-top:4px;}
+
+@media(max-width:700px){
+  .affiliate-grid{grid-template-columns:1fr;}
+  #map{height:260px;}
+}
+</style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <meta name="description" content="İzmir'den Ankara'a araçla gidiş maliyeti: yakıt, otoyol (HGS) ve toplam masraf hesabı. 2026 güncel fiyatlarla ücretsiz hesapla.">
+  <meta name="keywords" content="İzmir Ankara yol masrafı, İzmir Ankara yakıt masrafı, İzmir Ankara otoyol ücreti, İzmir Ankara araba masrafı">
+  <meta property="og:title" content="İzmir Ankara Arası Yol Masrafı Hesaplama 2026">
+  <meta property="og:description" content="İzmir'den Ankara'a araçla gidiş maliyeti: yakıt, otoyol (HGS) ve toplam masraf hesabı. 2026 güncel fiyatlarla ücretsiz hesapla.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://yolmasrafi.com/izmir-ankara/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "İzmir Ankara Arası Yol Masrafı Hesaplama 2026",
+    "description": "İzmir'den Ankara'a araçla gidiş maliyeti: yakıt, otoyol (HGS) ve toplam masraf hesabı. 2026 güncel fiyatlarla ücretsiz hesapla.",
+    "url": "https://yolmasrafi.com/izmir-ankara/"
+  }
+  </script>
+</head>
+<body>
+<div class="road-bg"></div>
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Rota hesaplanıyor...</div>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🚗</div>
+    <div class="logo-text">Yol<span>Masrafı</span></div>
+  </div>
+  <div class="badge">Türkiye 🇹🇷</div>
+  <a href="/" style="margin-left:12px;font-size:12px;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:4px 10px;border-radius:8px;">← Ana Sayfa</a>
+</header>
+
+<div class="container">
+  <div class="hero">
+    <h1>İzmir → Ankara<span class="line2">Yol Masrafı Hesaplama</span></h1>
+    <p>Araç, otobüs ve uçak — gerçek rota mesafesi, canlı yakıt fiyatları ve KGM 2026 tarifeleriyle.</p>
+    <div class="fuel-status fallback" id="fuelStatus">
+      <span class="dot"></span>
+      <span id="fuelStatusText">Yakıt fiyatları 26 Mart 2026 — dilediğiniz gibi düzenleyin</span>
+    </div>
+  </div>
+
+  <!-- FORM -->
+
+  <div class="card">
+    <div class="card-title">Güzergah & Araç Bilgileri</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nereden</label>
+        <select id="from"><option value="">Şehir seçin...</option></select>
+      </div>
+      <div class="form-group">
+        <label>Nereye</label>
+        <select id="to"><option value="">Şehir seçin...</option></select>
+      </div>
+      <div class="form-group">
+        <label>Araç Modeli</label>
+        <select id="carModel">
+          <option value="">Araç seçin...</option>
+          <optgroup label="Ekonomik">
+            <option value="6.5">Renault Clio (6.5 lt/100km)</option>
+            <option value="5.8">Toyota Corolla Hybrid (5.8 lt/100km)</option>
+            <option value="6.2">Volkswagen Polo (6.2 lt/100km)</option>
+            <option value="6.0">Fiat Egea (6.0 lt/100km)</option>
+            <option value="5.5">Hyundai i20 (5.5 lt/100km)</option>
+          </optgroup>
+          <optgroup label="Orta Segment">
+            <option value="7.5">Volkswagen Passat (7.5 lt/100km)</option>
+            <option value="7.2">Ford Focus (7.2 lt/100km)</option>
+            <option value="7.0">Skoda Octavia (7.0 lt/100km)</option>
+            <option value="7.8">Toyota Corolla Cross (7.8 lt/100km)</option>
+            <option value="7.6">Renault Megane (7.6 lt/100km)</option>
+          </optgroup>
+          <optgroup label="SUV / Üst Segment">
+            <option value="9.0">Ford Kuga (9.0 lt/100km)</option>
+            <option value="9.5">Hyundai Tucson (9.5 lt/100km)</option>
+            <option value="10.0">Volkswagen Tiguan (10.0 lt/100km)</option>
+            <option value="11.0">Toyota RAV4 (11.0 lt/100km)</option>
+            <option value="12.5">Land Rover Discovery (12.5 lt/100km)</option>
+          </optgroup>
+          <optgroup label="Özel"><option value="custom">Manuel gir</option></optgroup>
+        </select>
+      </div>
+      <div class="form-group" id="customGroup" style="display:none">
+        <label>Tüketim (lt/100km)</label>
+        <input type="number" id="customVal" placeholder="Örn: 7.5" min="3" max="25" step="0.1">
+      </div>
+    </div>
+    <div style="height:20px"></div>
+    <div class="form-group">
+      <label>Yakıt Tipi</label>
+      <div class="fuel-grid">
+        <button class="fuel-btn active" data-fuel="benzin" onclick="selectFuel(this)"><span class="ficon">⛽</span>Benzin</button>
+        <button class="fuel-btn" data-fuel="dizel" onclick="selectFuel(this)"><span class="ficon">🛢️</span>Dizel</button>
+        <button class="fuel-btn" data-fuel="lpg" onclick="selectFuel(this)"><span class="ficon">🔵</span>LPG</button>
+        <button class="fuel-btn" data-fuel="elektrik" onclick="selectFuel(this)"><span class="ficon">⚡</span>Elektrik</button>
+      </div>
+    </div>
+    <div style="height:20px"></div>
+    <div class="form-group">
+      <label>Güzergah Tercihi</label>
+      <div class="toggle-group">
+        <button class="toggle-btn active" data-route="ucretli" onclick="selectRoute(this)">
+          <span class="icon">🛣️</span>
+          <div><div style="font-size:14px;font-weight:600">Ücretli Otoyol</div><div style="font-size:11px;color:var(--muted)">Hızlı, konforlu</div></div>
+        </button>
+        <button class="toggle-btn" data-route="ucretsiz" onclick="selectRoute(this)">
+          <span class="icon">🌿</span>
+          <div><div style="font-size:14px;font-weight:600">Ücretsiz Yol</div><div style="font-size:11px;color:var(--muted)">Uzun ama parasız</div></div>
+        </button>
+      </div>
+    </div>
+    <div style="height:20px"></div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Yolcu Sayısı</label>
+        <select id="passengers">
+          <option value="1">1 kişi</option><option value="2">2 kişi</option>
+          <option value="3">3 kişi</option><option value="4">4 kişi</option><option value="5">5 kişi</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Gidiş / Dönüş</label>
+        <select id="roundTrip">
+          <option value="1">Sadece gidiş</option>
+          <option value="2">Gidiş + Dönüş</option>
+        </select>
+      </div>
+    </div>
+    <button class="calc-btn" id="calcBtn" onclick="calculate()">🧮 Masrafı Hesapla</button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <!-- YAKIIT FİYATLARI -->
+  <div class="card">
+    <div class="card-title">Yakıt Fiyatları</div>
+    <div class="fuel-prices-grid">
+      <div class="fuel-price-item" id="wrap_benzin">
+        <label>⛽ Benzin (95)</label>
+        <input type="number" id="price_benzin" value="63.68" step="0.01">
+        <div class="unit">₺ / litre</div>
+      </div>
+      <div class="fuel-price-item" id="wrap_dizel">
+        <label>🛢️ Motorin</label>
+        <input type="number" id="price_dizel" value="77.10" step="0.01">
+        <div class="unit">₺ / litre</div>
+      </div>
+      <div class="fuel-price-item" id="wrap_lpg">
+        <label>🔵 LPG (Otogaz)</label>
+        <input type="number" id="price_lpg" value="32.45" step="0.01">
+        <div class="unit">₺ / litre</div>
+      </div>
+      <div class="fuel-price-item" id="wrap_elektrik">
+        <label>⚡ Elektrik</label>
+        <input type="number" id="price_elektrik" value="8.50" step="0.01">
+        <div class="unit">₺ / kWh</div>
+      </div>
+    </div>
+    <div class="fuel-source-note">
+      <span>📅 26 Mart 2026 İzmir pompa ortalaması · EPDK verileri · Fiyatlar değiştiğinde yukarıdan düzenleyebilirsiniz</span>
+    </div>
+  </div>
+
+  <!-- SONUÇ -->
+  <div class="card" id="result">
+    <div class="result-header">
+      <div>
+        <div class="route-label">Hesaplama Sonucu</div>
+        <div class="route-cities">
+          <span id="res-from">—</span>
+          <span class="route-arrow">→</span>
+          <span id="res-to">—</span>
+        </div>
+      </div>
+      <div class="total-cost">
+        <div class="total-label">Araçla Toplam Maliyet</div>
+        <div class="total-amount" id="res-total">—<span> ₺</span></div>
+      </div>
+    </div>
+    <div class="breakdown">
+      <div class="breakdown-item">
+        <div class="b-label">🛣️ Mesafe</div>
+        <div class="b-value" id="res-km">—</div>
+        <div class="b-sub" id="res-km-sub">km · OSRM</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="b-label">⏱️ Tahmini Süre</div>
+        <div class="b-value" id="res-dur">—</div>
+        <div class="b-sub">saat/dakika</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="b-label">⛽ Yakıt</div>
+        <div class="b-value" id="res-fuel-cost">—</div>
+        <div class="b-sub" id="res-fuel-detail">₺</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="b-label">🏦 Otoyol HGS</div>
+        <div class="b-value" id="res-toll">—</div>
+        <div class="b-sub" id="res-toll-sub">KGM 2026</div>
+      </div>
+    </div>
+    <div class="info-strip" id="res-info"></div>
+
+    <div class="divider"></div>
+    <div class="section-title">Ücretli vs Ücretsiz Yol</div>
+    <div class="comparison">
+      <div class="comp-card" id="comp-toll">
+        <div class="comp-title"><span class="dot"></span>Ücretli Otoyol</div>
+        <div class="comp-price" id="comp-toll-price">—</div>
+        <div class="comp-detail" id="comp-toll-detail">—</div>
+      </div>
+      <div class="comp-card" id="comp-free">
+        <div class="comp-title"><span class="dot"></span>Ücretsiz Yol</div>
+        <div class="comp-price" id="comp-free-price">—</div>
+        <div class="comp-detail" id="comp-free-detail">—</div>
+      </div>
+    </div>
+    <div id="savings-section" style="text-align:center;margin-top:12px"></div>
+
+    <!-- OBİLET SECTION -->
+    <div class="divider"></div>
+    <div class="section-title">🎫 Otobüs & Uçak Biletleri</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Gerçek ve güncel bilet fiyatları için Obilet'e yönlendirilirsiniz. Fiyatları orada karşılaştırabilirsiniz.</p>
+    <div class="obilet-grid">
+      <div class="obilet-card bus-card">
+        <div class="obilet-header">
+          <span class="obilet-icon">🚌</span>
+          <div>
+            <div class="obilet-label">Otobüs</div>
+            <div class="obilet-sublabel" id="bus-route-label">— → —</div>
+          </div>
+        </div>
+        <div class="obilet-info" id="bus-info">
+          Otobüs seferleri için Obilet'te güncel firmaları ve fiyatları karşılaştırabilirsiniz.
+        </div>
+        <a id="obilet-bus-btn" href="#" target="_blank" rel="noopener" class="obilet-link bus">
+          🔎 Otobüs Seferlerini Gör →
+        </a>
+      </div>
+      <div class="obilet-card flight-card">
+        <div class="obilet-header">
+          <span class="obilet-icon">✈️</span>
+          <div>
+            <div class="obilet-label">Uçak</div>
+            <div class="obilet-sublabel" id="flight-route-label">— → —</div>
+          </div>
+        </div>
+        <div class="obilet-info" id="flight-info">
+          Uçak biletleri için Obilet'te tüm havayollarını karşılaştırabilirsiniz.
+        </div>
+        <a id="obilet-flight-btn" href="#" target="_blank" rel="noopener" class="obilet-link flight">
+          🔎 Uçak Biletlerini Gör →
+        </a>
+        <div class="no-airport-note" id="no-airport-note" style="display:none">
+          ⚠️ Bu şehirler arasında direkt uçuş olmayabilir
+        </div>
+      </div>
+    </div>
+
+
+    <!-- HARİTA -->
+    <div class="divider"></div>
+    <div id="mapSection">
+      <div class="section-title">🗺️ Güzergah Haritası</div>
+      <div id="map"></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">© OpenStreetMap katkıcıları · Rota OSRM tarafından hesaplanmıştır</div>
+    </div>
+
+    <!-- AFFİLİATE -->
+    <div class="divider"></div>
+    <div id="affiliateSection">
+      <div class="section-title">💼 Yolculuğunuz için</div>
+      <div class="affiliate-grid">
+        <div class="aff-card">
+          <div class="aff-icon">🚙</div>
+          <div class="aff-label">Araç Kiralama</div>
+          <div class="aff-desc">Bu güzergah için uygun fiyatlı araç seçeneklerini karşılaştırın.</div>
+          <a id="aff-car" href="https://www.sixt.com.tr" target="_blank" rel="noopener" class="aff-link car">Araç Kirala →</a>
+        </div>
+        <div class="aff-card">
+          <div class="aff-icon">🏨</div>
+          <div class="aff-label">Otel Bul</div>
+          <div class="aff-desc" id="aff-hotel-desc">Varış noktanızda konaklama seçeneklerini inceleyin.</div>
+          <a id="aff-hotel" href="#" target="_blank" rel="noopener" class="aff-link hotel">Otel Ara →</a>
+        </div>
+        <div class="aff-card">
+          <div class="aff-icon">🛡️</div>
+          <div class="aff-label">Trafik Sigortası</div>
+          <div class="aff-desc">Yola çıkmadan önce en uygun sigortayı bulun.</div>
+          <a href="https://www.sigortayeri.com.tr" target="_blank" rel="noopener" class="aff-link insurance">Sigorta Karşılaştır →</a>
+        </div>
+      </div>
+      <div class="aff-note">* Bağlantılar üzerinden yapılan rezervasyonlardan komisyon alınabilir</div>
+    </div>
+
+    <div class="price-note">
+      📡 Mesafe: OSRM/OpenStreetMap gerçek yol verisi &nbsp;·&nbsp; ⛽ Yakıt: EPDK 26 Mart 2026 İzmir ortalaması<br>
+      🏦 Otoyol: KGM 2026 resmi tarifesi &nbsp;·&nbsp; 🎫 Bilet fiyatları için obilet.com'a yönlendirilirsiniz
+    </div>
+  
+
+    <!-- POPÜLER ROTALAR -->
+    <div class="card" style="margin-top:0">
+      <div class="card-title">Popüler Rotalar</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">
+        <a href="/istanbul-ankara/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Ankara
+        </a>
+        <a href="/istanbul-izmir/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — İzmir
+        </a>
+        <a href="/istanbul-antalya/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Antalya
+        </a>
+        <a href="/istanbul-bursa/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Bursa
+        </a>
+        <a href="/istanbul-trabzon/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Trabzon
+        </a>
+        <a href="/istanbul-samsun/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Samsun
+        </a>
+        <a href="/istanbul-konya/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Konya
+        </a>
+        <a href="/istanbul-kayseri/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Kayseri
+        </a>
+        <a href="/istanbul-gaziantep/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Gaziantep
+        </a>
+        <a href="/istanbul-edirne/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Edirne
+        </a>
+        <a href="/istanbul-tekirdag/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Tekirdağ
+        </a>
+        <a href="/istanbul-kocaeli/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Kocaeli
+        </a>
+        <a href="/istanbul-sakarya/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Sakarya
+        </a>
+        <a href="/istanbul-bolu/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Bolu
+        </a>
+        <a href="/istanbul-eskisehir/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Eskişehir
+        </a>
+        <a href="/istanbul-diyarbakir/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İstanbul — Diyarbakır
+        </a>
+        <a href="/ankara-izmir/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — İzmir
+        </a>
+        <a href="/ankara-antalya/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Antalya
+        </a>
+        <a href="/ankara-bursa/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Bursa
+        </a>
+        <a href="/ankara-konya/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Konya
+        </a>
+        <a href="/ankara-kayseri/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Kayseri
+        </a>
+        <a href="/ankara-trabzon/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Trabzon
+        </a>
+        <a href="/ankara-samsun/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Samsun
+        </a>
+        <a href="/ankara-gaziantep/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Gaziantep
+        </a>
+        <a href="/ankara-adana/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Adana
+        </a>
+        <a href="/ankara-diyarbakir/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Diyarbakır
+        </a>
+        <a href="/ankara-eskisehir/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Eskişehir
+        </a>
+        <a href="/ankara-kahramanmaras/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Kahramanmaraş
+        </a>
+        <a href="/ankara-malatya/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Malatya
+        </a>
+        <a href="/ankara-erzurum/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Ankara — Erzurum
+        </a>
+        <a href="/izmir-antalya/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İzmir — Antalya
+        </a>
+        <a href="/izmir-konya/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İzmir — Konya
+        </a>
+        <a href="/izmir-adana/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İzmir — Adana
+        </a>
+        <a href="/izmir-mugla/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İzmir — Muğla
+        </a>
+        <a href="/izmir-denizli/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İzmir — Denizli
+        </a>
+        <a href="/izmir-manisa/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İzmir — Manisa
+        </a>
+        <a href="/izmir-bursa/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İzmir — Bursa
+        </a>
+        <a href="/izmir-kahramanmaras/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> İzmir — Kahramanmaraş
+        </a>
+        <a href="/antalya-konya/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Antalya — Konya
+        </a>
+        <a href="/antalya-adana/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Antalya — Adana
+        </a>
+        <a href="/antalya-mugla/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Antalya — Muğla
+        </a>
+        <a href="/antalya-denizli/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Antalya — Denizli
+        </a>
+        <a href="/antalya-isparta/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Antalya — Isparta
+        </a>
+        <a href="/bursa-canakkale/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Bursa — Çanakkale
+        </a>
+        <a href="/bursa-eskisehir/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Bursa — Eskişehir
+        </a>
+        <a href="/bursa-kocaeli/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Bursa — Kocaeli
+        </a>
+        <a href="/bursa-balikesir/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Bursa — Balıkesir
+        </a>
+        <a href="/konya-adana/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Konya — Adana
+        </a>
+        <a href="/konya-kayseri/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Konya — Kayseri
+        </a>
+        <a href="/konya-gaziantep/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Konya — Gaziantep
+        </a>
+        <a href="/konya-kahramanmaras/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Konya — Kahramanmaraş
+        </a>
+        <a href="/konya-nevsehir/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Konya — Nevşehir
+        </a>
+        <a href="/konya-karaman/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Konya — Karaman
+        </a>
+        <a href="/adana-gaziantep/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Adana — Gaziantep
+        </a>
+        <a href="/adana-mersin/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Adana — Mersin
+        </a>
+        <a href="/adana-hatay/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Adana — Hatay
+        </a>
+        <a href="/adana-kahramanmaras/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Adana — Kahramanmaraş
+        </a>
+        <a href="/adana-diyarbakir/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Adana — Diyarbakır
+        </a>
+        <a href="/adana-malatya/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Adana — Malatya
+        </a>
+        <a href="/trabzon-rize/" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;text-decoration:none;color:var(--text);font-size:13px;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <span style="color:var(--accent)">→</span> Trabzon — Rize
+        </a>
+      </div>
+    </div>
+</div>
+</div>
+
+<script>
+// ===== ŞEHİR KOORDİNATLARI =====
+const cityCoords = {
+  "Adana":[37.000,35.321],"Adıyaman":[37.764,38.278],"Afyonkarahisar":[38.757,30.540],
+  "Ağrı":[39.721,43.051],"Aksaray":[38.369,34.036],"Amasya":[40.649,35.833],
+  "Ankara":[39.921,32.854],"Antalya":[36.886,30.701],"Ardahan":[41.110,42.702],
+  "Artvin":[41.182,41.820],"Aydın":[37.856,27.846],"Balıkesir":[39.649,27.882],
+  "Bartın":[41.638,32.337],"Batman":[37.881,41.132],"Bayburt":[40.255,40.225],
+  "Bilecik":[40.150,29.979],"Bingöl":[38.885,40.498],"Bitlis":[38.400,42.107],
+  "Bolu":[40.736,31.606],"Burdur":[37.718,30.291],"Bursa":[40.183,29.067],
+  "Çanakkale":[40.152,26.414],"Çankırı":[40.600,33.616],"Çorum":[40.549,34.955],
+  "Denizli":[37.774,29.087],"Diyarbakır":[37.924,40.218],"Düzce":[40.844,31.156],
+  "Edirne":[41.677,26.556],"Elazığ":[38.674,39.223],"Erzincan":[39.750,39.491],
+  "Erzurum":[39.906,41.267],"Eskişehir":[39.777,30.521],"Gaziantep":[37.065,37.383],
+  "Giresun":[40.912,38.389],"Gümüşhane":[40.461,39.481],"Hakkari":[37.574,43.740],
+  "Hatay":[36.202,36.160],"Iğdır":[39.888,44.005],"Isparta":[37.764,30.556],
+  "Mersin":[36.812,34.641],"İstanbul":[41.015,28.979],"İzmir":[38.418,27.129],
+  "Kahramanmaraş":[37.586,36.937],"Karabük":[41.205,32.627],"Karaman":[37.181,33.215],
+  "Kars":[40.608,43.097],"Kastamonu":[41.377,33.775],"Kayseri":[38.735,35.487],
+  "Kırıkkale":[39.847,33.506],"Kırklareli":[41.735,27.225],"Kırşehir":[39.145,34.160],
+  "Kilis":[36.718,37.116],"Kocaeli":[40.763,29.919],"Konya":[37.871,32.485],
+  "Kütahya":[39.425,29.984],"Malatya":[38.355,38.309],"Manisa":[38.615,27.426],
+  "Mardin":[37.313,40.735],"Muğla":[37.215,28.364],"Muş":[38.733,41.491],
+  "Nevşehir":[38.625,34.714],"Niğde":[37.965,34.679],"Ordu":[40.984,37.879],
+  "Osmaniye":[37.074,36.247],"Rize":[41.021,40.523],"Sakarya":[40.767,30.394],
+  "Samsun":[41.286,36.330],"Siirt":[37.933,41.946],"Sinop":[42.030,35.153],
+  "Sivas":[39.748,37.017],"Şanlıurfa":[37.159,38.797],"Şırnak":[37.518,42.461],
+  "Tekirdağ":[40.978,27.515],"Tokat":[40.316,36.554],"Trabzon":[41.005,39.726],
+  "Tunceli":[39.108,39.548],"Uşak":[38.682,29.408],"Van":[38.494,43.380],
+  "Yalova":[40.655,29.276],"Yozgat":[39.820,34.808],"Zonguldak":[41.453,31.789]
+};
+
+// ===== OBİLET SLUGLAR =====
+const obiletSlugs = {
+  "Adana":"adana","Adıyaman":"adiyaman","Afyonkarahisar":"afyonkarahisar","Ağrı":"agri",
+  "Aksaray":"aksaray","Amasya":"amasya","Ankara":"ankara","Antalya":"antalya",
+  "Ardahan":"ardahan","Artvin":"artvin","Aydın":"aydin","Balıkesir":"balikesir",
+  "Bartın":"bartin","Batman":"batman","Bayburt":"bayburt","Bilecik":"bilecik",
+  "Bingöl":"bingol","Bitlis":"bitlis","Bolu":"bolu","Burdur":"burdur","Bursa":"bursa",
+  "Çanakkale":"canakkale","Çankırı":"cankiri","Çorum":"corum","Denizli":"denizli",
+  "Diyarbakır":"diyarbakir","Düzce":"duzce","Edirne":"edirne","Elazığ":"elazig",
+  "Erzincan":"erzincan","Erzurum":"erzurum","Eskişehir":"eskisehir","Gaziantep":"gaziantep",
+  "Giresun":"giresun","Gümüşhane":"gumushane","Hakkari":"hakkari","Hatay":"hatay",
+  "Iğdır":"igdir","Isparta":"isparta","Mersin":"mersin","İstanbul":"istanbul","İzmir":"izmir",
+  "Kahramanmaraş":"kahramanmaras","Karabük":"karabuk","Karaman":"karaman","Kars":"kars",
+  "Kastamonu":"kastamonu","Kayseri":"kayseri","Kırıkkale":"kirikkale","Kırklareli":"kirklareli",
+  "Kırşehir":"kirsehir","Kilis":"kilis","Kocaeli":"kocaeli","Konya":"konya","Kütahya":"kutahya",
+  "Malatya":"malatya","Manisa":"manisa","Mardin":"mardin","Muğla":"mugla","Muş":"mus",
+  "Nevşehir":"nevsehir","Niğde":"nigde","Ordu":"ordu","Osmaniye":"osmaniye","Rize":"rize",
+  "Sakarya":"sakarya","Samsun":"samsun","Siirt":"siirt","Sinop":"sinop","Sivas":"sivas",
+  "Şanlıurfa":"sanliurfa","Şırnak":"sirnak","Tekirdağ":"tekirdag","Tokat":"tokat",
+  "Trabzon":"trabzon","Tunceli":"tunceli","Uşak":"usak","Van":"van","Yalova":"yalova",
+  "Yozgat":"yozgat","Zonguldak":"zonguldak"
+};
+
+
+const hasAirport = new Set([
+  "Adana","Adıyaman","Ağrı","Ankara","Antalya","Ardahan","Artvin","Balıkesir","Batman",
+  "Bingöl","Bitlis","Burdur","Bursa","Çanakkale","Denizli","Diyarbakır","Edirne",
+  "Elazığ","Erzincan","Erzurum","Gaziantep","Giresun","Hakkari","Hatay","Iğdır",
+  "Isparta","Mersin","İstanbul","İzmir","Kahramanmaraş","Karaman","Kars","Kastamonu",
+  "Kayseri","Kocaeli","Konya","Malatya","Mardin","Muğla","Muş","Nevşehir","Niğde",
+  "Ordu","Rize","Sakarya","Samsun","Siirt","Sinop","Sivas","Şanlıurfa","Şırnak",
+  "Tekirdağ","Tokat","Trabzon","Tunceli","Uşak","Van","Yalova","Zonguldak"
+]);
+
+// ===== KGM 2026 OTOYOl ÜCRETLERİ =====
+const tollDB = {
+  "İzmir-İstanbul":1965,"İstanbul-İzmir":1965,"İzmir-Bursa":1420,"Bursa-İzmir":1420,
+  "İzmir-Ankara":520,"Ankara-İzmir":520,"İzmir-Konya":530,"Konya-İzmir":530,
+  "İzmir-Antalya":160,"Antalya-İzmir":160,"İzmir-Denizli":90,"Denizli-İzmir":90,
+  "İzmir-Muğla":80,"Muğla-İzmir":80,"İzmir-Manisa":15,"Manisa-İzmir":15,
+  "İzmir-Kahramanmaraş":680,"Kahramanmaraş-İzmir":680,"İzmir-Adana":740,"Adana-İzmir":740,
+  "İstanbul-Ankara":620,"Ankara-İstanbul":620,"İstanbul-Bursa":560,"Bursa-İstanbul":560,
+  "İstanbul-Konya":730,"Konya-İstanbul":730,"İstanbul-Antalya":880,"Antalya-İstanbul":880,
+  "İstanbul-Kocaeli":95,"Kocaeli-İstanbul":95,"İstanbul-Sakarya":155,"Sakarya-İstanbul":155,
+  "İstanbul-Bolu":235,"Bolu-İstanbul":235,"İstanbul-Düzce":265,"Düzce-İstanbul":265,
+  "İstanbul-Trabzon":760,"Trabzon-İstanbul":760,"İstanbul-Samsun":590,"Samsun-İstanbul":590,
+  "İstanbul-Edirne":220,"Edirne-İstanbul":220,"İstanbul-Tekirdağ":95,"Tekirdağ-İstanbul":95,
+  "İstanbul-Kırklareli":170,"Kırklareli-İstanbul":170,"İstanbul-Gaziantep":940,"Gaziantep-İstanbul":940,
+  "İstanbul-Kayseri":720,"Kayseri-İstanbul":720,"İstanbul-Eskişehir":370,"Eskişehir-İstanbul":370,
+  "Ankara-Bursa":380,"Bursa-Ankara":380,"Ankara-Konya":120,"Konya-Ankara":120,
+  "Ankara-Antalya":310,"Antalya-Ankara":310,"Ankara-Samsun":250,"Samsun-Ankara":250,
+  "Ankara-Kayseri":130,"Kayseri-Ankara":130,"Ankara-Trabzon":430,"Trabzon-Ankara":430,
+  "Ankara-Kahramanmaraş":310,"Kahramanmaraş-Ankara":310,"Ankara-Gaziantep":390,"Gaziantep-Ankara":390,
+  "Ankara-Adana":330,"Adana-Ankara":330,"Ankara-Diyarbakır":510,"Diyarbakır-Ankara":510,
+  "Ankara-Eskişehir":130,"Eskişehir-Ankara":130,"Ankara-Bolu":110,"Bolu-Ankara":110,
+  "Bursa-Çanakkale":1120,"Çanakkale-Bursa":1120,"Konya-Adana":220,"Adana-Konya":220,
+  "Konya-Kayseri":130,"Kayseri-Konya":130,"Konya-Antalya":180,"Antalya-Konya":180,
+  "Konya-Gaziantep":310,"Gaziantep-Konya":310,"Konya-Kahramanmaraş":260,"Kahramanmaraş-Konya":260,
+  "Kahramanmaraş-Adana":130,"Adana-Kahramanmaraş":130,"Kahramanmaraş-Gaziantep":50,"Gaziantep-Kahramanmaraş":50,
+  "Kahramanmaraş-Malatya":110,"Malatya-Kahramanmaraş":110,"Adana-Gaziantep":140,"Gaziantep-Adana":140,
+  "Adana-Diyarbakır":310,"Diyarbakır-Adana":310,"Adana-Mersin":50,"Mersin-Adana":50,
+  "Adana-Hatay":90,"Hatay-Adana":90,"Kayseri-Sivas":110,"Sivas-Kayseri":110,
+  "Kayseri-Malatya":190,"Malatya-Kayseri":190,"Antalya-Adana":350,"Adana-Antalya":350,
+  "Antalya-Muğla":90,"Muğla-Antalya":90,"Antalya-Denizli":130,"Denizli-Antalya":130,
+  "Trabzon-Rize":35,"Rize-Trabzon":35,"Trabzon-Samsun":210,"Samsun-Trabzon":210,
+  "Trabzon-Erzurum":190,"Erzurum-Trabzon":190,"Trabzon-Giresun":60,"Giresun-Trabzon":60,
+  "Gaziantep-Diyarbakır":220,"Diyarbakır-Gaziantep":220,"Gaziantep-Şanlıurfa":130,"Şanlıurfa-Gaziantep":130,
+  "Gaziantep-Hatay":90,"Hatay-Gaziantep":90,"Diyarbakır-Şanlıurfa":130,"Şanlıurfa-Diyarbakır":130,
+  "Diyarbakır-Mardin":50,"Mardin-Diyarbakır":50,"Diyarbakır-Elazığ":90,"Elazığ-Diyarbakır":90,
+  "Malatya-Elazığ":50,"Elazığ-Malatya":50,"Malatya-Adıyaman":60,"Adıyaman-Malatya":60,
+  "Malatya-Sivas":130,"Sivas-Malatya":130,"Erzurum-Erzincan":95,"Erzincan-Erzurum":95,
+};
+
+// ===== GLOBAL STATE =====
+let selectedFuel='benzin', selectedRoute='ucretli';
+
+// ===== UI HELPERS =====
+function selectFuel(btn){document.querySelectorAll('.fuel-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');selectedFuel=btn.dataset.fuel;}
+function selectRoute(btn){document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');selectedRoute=btn.dataset.route;}
+document.getElementById('carModel').addEventListener('change',function(){document.getElementById('customGroup').style.display=this.value==='custom'?'flex':'none';});
+
+function populateCities(){
+  const sorted=Object.keys(cityCoords).sort((a,b)=>a.localeCompare(b,'tr'));
+  ['from','to'].forEach(id=>{
+    const sel=document.getElementById(id);
+    sel.innerHTML='<option value="">Şehir seçin...</option>';
+    sorted.forEach(c=>{sel.innerHTML+=`<option value="${c}">${c}</option>`;});
+  });
+  document.getElementById('from').value='İzmir';
+  document.getElementById('to').value='Kahramanmaraş';
+}
+
+function getObiletUrl(from, to, type){
+  const f=obiletSlugs[from]||toSlug(from), t=obiletSlugs[to]||toSlug(to);
+  return type==='bus'
+    ?`https://www.obilet.com/otobus-bileti/${f}-${t}`
+    :`https://www.obilet.com/ucak-bileti/${f}-${t}`;
+}
+function toSlug(s){return s.toLowerCase().replace(/ı/g,'i').replace(/İ/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c').replace(/[^a-z0-9]/g,'-');}
+function getFuelPrice(type){return parseFloat(document.getElementById('price_'+type).value)||0;}
+function fmt(n){return Math.round(n).toLocaleString('tr-TR');}
+function formatDur(m){const h=Math.floor(m/60),mn=m%60;return h>0?`${h}s ${mn}d`:`${mn}d`;}
+function showLoading(msg){document.getElementById('loadingText').textContent=msg;document.getElementById('loadingOverlay').classList.add('active');}
+function hideLoading(){document.getElementById('loadingOverlay').classList.remove('active');}
+function showError(msg){const el=document.getElementById('errorMsg');el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',6000);}
+
+async function getRoute(fromCity,toCity,avoidHighways){
+  const[fLat,fLon]=cityCoords[fromCity],[tLat,tLon]=cityCoords[toCity];
+  const url=`https://router.project-osrm.org/route/v1/driving/${fLon},${fLat};${tLon},${tLat}?overview=false${avoidHighways?'&exclude=motorway':''}`;
+  const resp=await fetch(url,{signal:AbortSignal.timeout(8000)});
+  if(!resp.ok) throw new Error('OSRM yanıt vermedi');
+  const data=await resp.json();
+  if(!data.routes?.length) throw new Error('Rota bulunamadı');
+  return{dist:Math.round(data.routes[0].distance/1000),dur:Math.round(data.routes[0].duration/60)};
+}
+
+// ===== ANA HESAPLAMA =====
+async function calculate(){
+  document.getElementById('errorMsg').style.display='none';
+  const from=document.getElementById('from').value;
+  const to=document.getElementById('to').value;
+  const carVal=document.getElementById('carModel').value;
+  const passengers=parseInt(document.getElementById('passengers').value);
+  const roundTrip=parseInt(document.getElementById('roundTrip').value);
+  if(!from||!to){showError('Lütfen nereden ve nereye seçin.');return;}
+  if(from===to){showError('Farklı iki şehir seçin.');return;}
+  if(!carVal){showError('Lütfen bir araç seçin.');return;}
+  const isElectric=selectedFuel==='elektrik';
+  let consumption;
+  if(isElectric) consumption=18;
+  else if(carVal==='custom'){
+    consumption=parseFloat(document.getElementById('customVal').value);
+    if(!consumption||consumption<1){showError('Geçerli tüketim değeri girin.');return;}
+  } else consumption=parseFloat(carVal);
+  const fuelPrice=getFuelPrice(selectedFuel);
+  document.getElementById('calcBtn').disabled=true;
+  try{
+    showLoading('OSRM\'den gerçek rota alınıyor...');
+    const[r1,r2]=await Promise.allSettled([getRoute(from,to,false),getRoute(from,to,true)]);
+    let routeToll=r1.status==='fulfilled'?r1.value:null;
+    let routeFree=r2.status==='fulfilled'?r2.value:null;
+    if(!routeToll&&!routeFree) throw new Error('OSRM\'e ulaşılamadı.');
+    if(!routeToll) routeToll={dist:Math.round(routeFree.dist*.87),dur:Math.round(routeFree.dur*.78)};
+    if(!routeFree) routeFree={dist:Math.round(routeToll.dist*1.18),dur:Math.round(routeToll.dur*1.35)};
+    const route=selectedRoute==='ucretli'?routeToll:routeFree;
+    const distRound=route.dist*roundTrip;
+    const fuelCostPer100=consumption*fuelPrice;
+    const fuelTotal=(distRound/100)*fuelCostPer100;
+    let tollBase=tollDB[`${from}-${to}`]??tollDB[`${to}-${from}`]??null;
+    const tollIsEst=tollBase===null;
+    if(tollIsEst) tollBase=Math.round(routeToll.dist*0.47);
+    const tollTotal=selectedRoute==='ucretli'?tollBase*roundTrip:0;
+    const totalCost=fuelTotal+tollTotal;
+    const perPerson=totalCost/passengers;
+    const fuelTollScen=(routeToll.dist*roundTrip/100)*fuelCostPer100;
+    const fuelFreeScen=(routeFree.dist*roundTrip/100)*fuelCostPer100;
+    const tollScen=tollBase*roundTrip;
+    const totalTollScen=fuelTollScen+tollScen;
+    const totalFreeScen=fuelFreeScen;
+
+    document.getElementById('result').style.display='block';
+    document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'});
+    // Harita ve affiliate linkleri arka planda yükle
+    drawMap(from, to, routeToll, routeFree);
+    buildAffiliateLinks(from, to);
+    document.getElementById('res-from').textContent=from;
+    document.getElementById('res-to').textContent=to;
+    document.getElementById('res-total').innerHTML=`${fmt(totalCost)}<span> ₺</span>`;
+    document.getElementById('res-km').textContent=fmt(route.dist)+' km';
+    document.getElementById('res-km-sub').textContent=roundTrip===2?`G/D: ${fmt(distRound)} km`:'tek yön · OSRM';
+    document.getElementById('res-dur').textContent=formatDur(route.dur*roundTrip);
+    const fuelLabel={benzin:'Benzin',dizel:'Motorin',lpg:'LPG',elektrik:'Elektrik'}[selectedFuel];
+    const unit=isElectric?'kWh/100km':'lt/100km';
+    document.getElementById('res-fuel-cost').textContent=fmt(fuelTotal)+' ₺';
+    document.getElementById('res-fuel-detail').textContent=`${consumption} ${unit} × ${fuelPrice.toFixed(2)} ₺`;
+    document.getElementById('res-toll').textContent=selectedRoute==='ucretli'?fmt(tollTotal)+' ₺':'0 ₺';
+    document.getElementById('res-toll-sub').textContent=selectedRoute==='ucretli'?(tollIsEst?'Tahmini':'KGM 2026'):'Kullanılmıyor';
+    document.getElementById('res-info').innerHTML=
+      `<strong>${from} → ${to}</strong> arası ${selectedRoute==='ucretli'?'ücretli otoyol':'ücretsiz yol'} ile `+
+      `<strong>${fmt(route.dist)} km</strong>, ~<strong>${formatDur(route.dur)}</strong>. `+
+      `${fuelLabel}: <strong>${fmt(fuelTotal)} ₺</strong> + Otoyol: <strong>${fmt(tollTotal)} ₺</strong> = `+
+      `<strong>${fmt(totalCost)} ₺</strong>.`+
+      (passengers>1?` Kişi başı: <strong>${fmt(perPerson)} ₺</strong>.`:'');
+    document.getElementById('comp-toll-price').textContent=fmt(totalTollScen)+' ₺';
+    document.getElementById('comp-toll-detail').innerHTML=`Yakıt: ${fmt(fuelTollScen)} ₺<br>Otoyol: ${fmt(tollScen)} ₺<br>${fmt(routeToll.dist*roundTrip)} km · ${formatDur(routeToll.dur*roundTrip)}`;
+    document.getElementById('comp-free-price').textContent=fmt(totalFreeScen)+' ₺';
+    document.getElementById('comp-free-detail').innerHTML=`Yakıt: ${fmt(fuelFreeScen)} ₺<br>Otoyol: 0 ₺<br>${fmt(routeFree.dist*roundTrip)} km · ${formatDur(routeFree.dur*roundTrip)}`;
+    const savings=Math.abs(totalTollScen-totalFreeScen);
+    if(totalTollScen<totalFreeScen){
+      document.getElementById('comp-toll').classList.add('highlight');document.getElementById('comp-free').classList.remove('highlight');
+      document.getElementById('savings-section').innerHTML=`<div class="savings-badge">✅ Ücretli otoyol ${fmt(savings)} ₺ daha ucuz!</div>`;
+    } else {
+      document.getElementById('comp-free').classList.add('highlight');document.getElementById('comp-toll').classList.remove('highlight');
+      document.getElementById('savings-section').innerHTML=`<div class="savings-badge">🌿 Ücretsiz yol ${fmt(savings)} ₺ daha ucuz!</div>`;
+    }
+
+    // Obilet
+    const routeStr=`${from} → ${to}`;
+    document.getElementById('bus-route-label').textContent=routeStr;
+    document.getElementById('flight-route-label').textContent=routeStr;
+    document.getElementById('bus-info').textContent=
+      `Obilet'te ${from}–${to} arasındaki tüm otobüs firmalarını, kalkış saatlerini ve güncel fiyatları karşılaştırabilirsiniz.`;
+    const busUrl=getObiletUrl(from,to,'bus');
+    const flightUrl=getObiletUrl(from,to,'flight');
+    document.getElementById('obilet-bus-btn').href=busUrl;
+    document.getElementById('obilet-flight-btn').href=flightUrl;
+    const noAirport=!hasAirport.has(from)||!hasAirport.has(to);
+    if(noAirport){
+      document.getElementById('flight-info').textContent=`${from} veya ${to} için havalimanı bilgimiz bulunmuyor. Yine de Obilet'ten kontrol edebilirsiniz.`;
+      document.getElementById('obilet-flight-btn').classList.add('disabled');
+      document.getElementById('no-airport-note').style.display='flex';
+    } else {
+      document.getElementById('flight-info').textContent=`Obilet'te ${from}–${to} arası tüm havayollarını ve güncel bilet fiyatlarını karşılaştırabilirsiniz.`;
+      document.getElementById('obilet-flight-btn').classList.remove('disabled');
+      document.getElementById('no-airport-note').style.display='none';
+    }
+  }catch(err){
+    showError('Hata: '+err.message);console.error(err);
+  }finally{
+    hideLoading();document.getElementById('calcBtn').disabled=false;
+  }
+}
+
+// ===== HARİTA =====
+let mapInstance = null;
+let routeLayer = null;
+
+async function drawMap(fromCity, toCity, routeToll, routeFree) {
+  const [fLat, fLon] = cityCoords[fromCity];
+  const [tLat, tLon] = cityCoords[toCity];
+
+  document.getElementById('mapSection').style.display = 'block';
+
+  // Map init veya reset
+  if (mapInstance) {
+    mapInstance.remove();
+    mapInstance = null;
+  }
+
+  mapInstance = L.map('map', { zoomControl: true, scrollWheelZoom: false });
+
+  // Karanlık tema tile
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap © CARTO',
+    maxZoom: 18
+  }).addTo(mapInstance);
+
+  // Başlangıç ve bitiş marker'ları
+  const fromIcon = L.divIcon({
+    html: '<div style="background:#f5a623;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 6px rgba(0,0,0,.5)"></div>',
+    className: '', iconAnchor: [7, 7]
+  });
+  const toIcon = L.divIcon({
+    html: '<div style="background:#e8522a;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 6px rgba(0,0,0,.5)"></div>',
+    className: '', iconAnchor: [7, 7]
+  });
+
+  L.marker([fLat, fLon], {icon: fromIcon}).addTo(mapInstance)
+    .bindPopup(`<b>${fromCity}</b><br>Başlangıç`);
+  L.marker([tLat, tLon], {icon: toIcon}).addTo(mapInstance)
+    .bindPopup(`<b>${toCity}</b><br>Varış`);
+
+  // OSRM'den full geometry çek (overview=full)
+  try {
+    const url = `https://router.project-osrm.org/route/v1/driving/${fLon},${fLat};${tLon},${tLat}?overview=full&geometries=geojson`;
+    const resp = await fetch(url, {signal: AbortSignal.timeout(8000)});
+    const data = await resp.json();
+    if (data.routes && data.routes[0]) {
+      const coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+      const poly = L.polyline(coords, {
+        color: '#f5a623', weight: 4, opacity: .85,
+        dashArray: null
+      }).addTo(mapInstance);
+      mapInstance.fitBounds(poly.getBounds(), {padding: [30, 30]});
+    } else {
+      // Rota çizilemezse düz çizgi
+      const line = L.polyline([[fLat, fLon],[tLat, tLon]], {color:'#f5a623', weight:3, dashArray:'8,6', opacity:.7}).addTo(mapInstance);
+      mapInstance.fitBounds(line.getBounds(), {padding:[30,30]});
+    }
+  } catch(e) {
+    const line = L.polyline([[fLat, fLon],[tLat, tLon]], {color:'#f5a623', weight:3, dashArray:'8,6', opacity:.7}).addTo(mapInstance);
+    mapInstance.fitBounds(line.getBounds(), {padding:[30,30]});
+  }
+}
+
+// ===== AFFİLİATE LİNKLER =====
+function buildAffiliateLinks(fromCity, toCity) {
+  document.getElementById('affiliateSection').style.display = 'block';
+
+  const toSlugLocal = s => s.toLowerCase()
+    .replace(/ı/g,'i').replace(/İ/g,'i').replace(/ş/g,'s').replace(/ğ/g,'g')
+    .replace(/ü/g,'u').replace(/ö/g,'o').replace(/ç/g,'c').replace(/[^a-z0-9]/g,'-');
+
+  // Booking.com — şehir adıyla arama
+  const bookingCity = encodeURIComponent(toCity);
+  document.getElementById('aff-hotel').href =
+    `https://www.booking.com/searchresults.tr.html?ss=${bookingCity}&lang=tr`;
+  document.getElementById('aff-hotel-desc').textContent =
+    `${toCity} için uygun otel fiyatlarını Booking.com'da karşılaştırın.`;
+
+  // Sixt — varış şehrine göre (Türkiye ana sayfası, şehir parametresi zor)
+  document.getElementById('aff-car').href =
+    `https://www.sixt.com.tr/araba-kiralama/${toSlugLocal(toCity)}/`;
+}
+
+populateCities();
+</script>
+
+  <script>
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        var f = document.getElementById('from');
+        var t = document.getElementById('to');
+        if (f && t) {
+          f.value = 'İzmir';
+          t.value = 'Ankara';
+          document.getElementById('carModel').value = '7.0';
+          calculate();
+        }
+      }, 800);
+    });
+  </script>
+</body>
+</html>
